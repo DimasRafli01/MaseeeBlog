@@ -1,9 +1,9 @@
 <?php
-include 'config/db.php';
+global $conn;             
+global $cari;            
+global $data_per_halaman;
 
 $id = $_GET['id'];
-
-// $query_kategori = mysqli_query($conn, "SELECT *FROM kategori");
 
 $query = mysqli_query($conn, "SELECT
     blog.idblog,

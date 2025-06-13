@@ -1,7 +1,12 @@
 <?php
-require_once './config/db.php';
+global $conn;
+global $query_kategori;
+global $cari;
+global $data_per_halaman;
 
-$query_kategori = mysqli_query($conn, "SELECT *FROM kategori");
+mysqli_data_seek($query_kategori, 0);
+$query_footer = $query_kategori;
+
 ?>
 <footer class="pt-5 pb-4" style="background-color:#dbdbdb">
     <div class="container">
@@ -14,9 +19,9 @@ $query_kategori = mysqli_query($conn, "SELECT *FROM kategori");
                     Kami adalah platform blog yang berdedikasi untuk menyajikan berita, artikel, dan informasi
                     terbaru di berbagai topik menarik.
                 </p>
-                <p><i class="bi bi-geo-alt-fill me-2"></i> Jl. Contoh No. 123, Kota Medan, Sumatera Utara</p>
-                <p><i class="bi bi-envelope-fill me-2"></i> info@maseeeblog.com</p>
-                <p><i class="bi bi-phone-fill me-2"></i> +62 812 3456 7890</p>
+                <p>Jl. Lorem No. 123, Kota Medan, Sumatera Utara</p>
+                <p>info@maseeeblog.com</p>
+                <p>+62 812 3456 7890</p>
             </div>
 
             <div class="col-lg-2 col-md-6 mb-4">
@@ -39,23 +44,26 @@ $query_kategori = mysqli_query($conn, "SELECT *FROM kategori");
             <div class="col-lg-3 col-md-6 mb-4">
                 <h5 class="text-uppercase fw-bold mb-4">Kategori Populer</h5>
                 <ul class="list-unstyled">
-                    <ul class="list-group list-group-flush">
                         <?php
-                        while (
-                            $rowkategori = mysqli_fetch_assoc($query_kategori)
-                        ) {
-                            ?>
-                            <li class="list-group-item"><a href="?page=blog&kategori=<?php echo $rowkategori['idkategori'];
-                            // Preserve search and data_per_halaman when changing category
-                            if (!empty($cari)) {
-                                echo '&cari=' . urlencode(htmlspecialchars($cari));
-                            }
-                            echo '&data_per_halaman=' . $data_per_halaman;
-                            ?>"
-                                    class="text-decoration-none text-gray-700 d-block"><?php echo $rowkategori['namakategori'] ?></a>
-                            </li>
-                        <?php } ?>
-                    </ul>
+                        if ($query_footer instanceof mysqli_result && mysqli_num_rows($query_footer) > 0) {
+                            while (
+                                $rowkategori = mysqli_fetch_assoc($query_footer)
+                            ) {
+                                ?>
+                                <li class="list-group-item"><a href="?page=blog&kategori=<?php echo htmlspecialchars($rowkategori['idkategori']);
+                                if (!empty($cari)) {
+                                    echo '&cari=' . urlencode(htmlspecialchars($cari));
+                                }
+                                if (isset($data_per_halaman) && $data_per_halaman !== 5) {
+                                    echo '&data_per_halaman=' . htmlspecialchars($data_per_halaman);
+                                }
+                                ?>"
+                                        class="text-decoration-none text-gray-700 d-block"><?php echo htmlspecialchars($rowkategori['namakategori']) ?></a>
+                                </li>
+                            <?php }
+                        } else {
+                            echo '<li class="list-group-item text-muted">Tidak ada kategori.</li>';
+                        } ?>
                 </ul>
             </div>
 

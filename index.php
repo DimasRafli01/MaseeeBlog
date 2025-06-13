@@ -1,4 +1,23 @@
 <?php
+// index.php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+session_start();
+
+//koneksi
+require_once 'config/db.php';
+
+if (!isset($conn) || !$conn instanceof mysqli || $conn->connect_error) {
+    die("DEBUG: Gagal inisialisasi \$conn di index.php. Pastikan db.php berfungsi.");
+}
+
+$query_kategori = mysqli_query($conn, "SELECT * FROM kategori") or die("DEBUG: Kueri kategori gagal di index.php: " . mysqli_error($conn));
+$cari = $_GET['cari'] ?? $_POST['cari'] ?? '';
+$data_per_halaman = $_GET['data_per_halaman'] ?? $_POST['data_per_halaman'] ?? 5;
+
+
 
 // fungsi page
 $page = isset($_GET['page']) ? $_GET['page'] : 'blog';
@@ -41,45 +60,54 @@ if (isset($_GET['proccess'])) {
   }
   loadPage($proccess);
 }
-// end fungsi page
+
+// Inisialisasi $page
+$page = isset($_GET['page']) ? $_GET['page'] : 'blog';
+
+if (isset($_GET['proccess'])) {
+    $proccess = $_GET['proccess'];
+    if ($proccess === 'blogtbh' || $proccess === 'blogedit_process' || $proccess === 'bloghapus') {
+        loadPage($proccess);
+        exit();
+    } else {
+        loadPage($proccess);
+    }
+}
 
 // alert
 if (isset($_GET['login'])) {
-  if ($_GET['login'] == 'success') {
-    echo "<script>alert('Login berhasil!'); window.location.href = 'index.php?page=blog';</script>";
-  } elseif ($_GET['login'] == 'failed') {
-    echo "<script>alert('Password salah!'); window.location.href = 'index.php?page=blog';</script>";
-  } elseif ($_GET['login'] == 'notfound') {
-    echo "<script>alert('Pengguna tidak ditemukan.'); window.location.href = 'index.php?page=blog';</script>";
-  } elseif ($_GET['login'] == 'signinsuccess') {
-    echo "<script>alert('Registrasi berhasil'); window.location.href = 'index.php?page=blog';</script>";
-  }
+    if ($_GET['login'] == 'success') {
+        echo "<script>alert('Login berhasil!'); window.location.href = 'index.php?page=blog';</script>";
+    } elseif ($_GET['login'] == 'failed') {
+        echo "<script>alert('Password salah!'); window.location.href = 'index.php?page=blog';</script>";
+    } elseif ($_GET['login'] == 'notfound') {
+        echo "<script>alert('Pengguna tidak ditemukan.'); window.location.href = 'index.php?page=blog';</script>";
+    } elseif ($_GET['login'] == 'signinsuccess') {
+        echo "<script>alert('Registrasi berhasil'); window.location.href = 'index.php?page=blog';</script>";
+    }
 }
 
 if (isset($_GET['logout'])) {
-  if ($_GET['logout'] == 'successlogout') {
-    echo "<script>alert('Logout berhasil!'); window.location.href = 'index.php?page=blog';</script>";
-  }
+    if ($_GET['logout'] == 'successlogout') {
+        echo "<script>alert('Logout berhasil!'); window.location.href = 'index.php?page=blog';</script>";
+    }
 }
-// alert
 
-// memanggil page
-if ($page === 'admin' || $page === 'blogview' || $page === 'blogtambah' || $page === 'blogedit') {
-  loadPage($page);
-  // include 'include/template/footer.php';
-} else if ($page === 'login' || $page ==='register') {
-  include 'include/template/css.php';
-  // include 'include/template/header.php';
-  loadPage($page);
-  // include 'include/template/footer.php';
-  include 'include/template/js.php';
+// memanngil page
+if (in_array($page, ['admin', 'blogview', 'blogtambah', 'blogedit'])) {
+    loadPage($page);
+} else if (in_array($page, ['login', 'register'])) {
+    include 'include/template/css.php';
+    loadPage($page);
+    include 'include/template/js.php';
 } else {
-  // include 'include/template/css.php';
-  include 'include/template/header.php';
-  loadPage($page);
-  include 'include/template/footer.php';
-  include 'include/template/js.php';
+    include 'include/template/header.php';
+    loadPage($page);
+    include 'include/template/footer.php';
+    include 'include/template/js.php';
 }
 
-// end memanggil page
+if (isset($conn) && $conn instanceof mysqli) {
+    $conn->close();
+}
 ?>

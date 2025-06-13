@@ -1,8 +1,5 @@
 <?php
-
-// Baca variabel lingkungan dari .env
-// $env = parse_ini_file('../.env');
-$env = parse_ini_file(dirname(__DIR__) . '/./.env');
+$env = parse_ini_file(dirname(__DIR__) . '/.env');
 
 // Konfigurasi database
 $db_host = $env['DB_HOST'];
@@ -17,13 +14,14 @@ $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
 if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
 }
-// else {
-//     // echo "Koneksi berhasil";
-// }
+
+// Set charset untuk memastikan karakter khusus ditangani dengan benar
+$conn->set_charset("utf8mb4");
 
 // Fungsi untuk membersihkan input
 function clean_input($data) {
-    global $conn;
+    global $conn; // Penting untuk mengakses koneksi global
     return mysqli_real_escape_string($conn, htmlspecialchars(trim($data)));
 }
+
 ?>

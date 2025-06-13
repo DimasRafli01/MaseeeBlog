@@ -1,5 +1,5 @@
 <?php
-include 'config/db.php';
+global $conn;             
 
 $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
@@ -52,16 +52,13 @@ if (!$row) {
 
         .blog-details {
             line-height: 1.7;
-            /* Meningkatkan line height untuk keterbacaan */
         }
 
         .blog-title {
             font-size: 2.2rem;
-            /* Lebih besar dari card title */
             font-weight: bold;
             margin-bottom: 15px;
             color: #2c3e50;
-            /* Warna yang sedikit lebih gelap */
         }
 
         .author-date {
@@ -69,11 +66,8 @@ if (!$row) {
             color: #6c757d;
             margin-bottom: 20px;
             display: flex;
-            /* Menggunakan flexbox untuk layout */
             justify-content: space-between;
-            /* Memisahkan penulis dan tanggal */
             align-items: center;
-            /* Mengalign item secara vertikal di tengah */
         }
 
         .author {
@@ -86,12 +80,9 @@ if (!$row) {
 
         .blog-content {
             font-size: 1.1rem;
-            /* Ukuran font yang lebih besar untuk isi konten */
             color: #444;
-            /* Warna teks yang sedikit lebih gelap untuk konten */
             margin-bottom: 25px;
-            /* Margin bottom yang lebih besar */
-            white-space: pre-line; /* mempertahankan newlines */
+            white-space: pre-line;
         }
 
         .back-button {

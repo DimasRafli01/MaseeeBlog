@@ -1,7 +1,5 @@
 <?php
-require_once 'config/db.php';
-
-
+global $conn;             
 
 $idblog = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
@@ -33,14 +31,10 @@ JOIN
         $blog_data = null;
         error_log("Error preparing detail blog query: " . mysqli_error($conn));
     }
-
 } else {
     $blog_data = null;
 }
 ?>
-
-
-
 <style>
     .blog-detail-card {
         padding: 20px;  

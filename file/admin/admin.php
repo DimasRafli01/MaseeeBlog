@@ -1,7 +1,8 @@
 <?php
-include './config/db.php';
+global $conn;             
+global $cari;            
+global $data_per_halaman;
 
-// Atur jumlah data per halaman (bisa diubah melalui form atau URL, dengan prioritas ke URL)
 if (isset($_POST['data_per_halaman'])) {
     $data_per_halaman = (int) $_POST['data_per_halaman'];
 } elseif (isset($_GET['data_per_halaman'])) {
@@ -9,9 +10,8 @@ if (isset($_POST['data_per_halaman'])) {
 } else {
     $data_per_halaman = 5;
 }
-$data_per_halaman = max(1, $data_per_halaman); // Pastikan minimal 1 data per halaman
+$data_per_halaman = max(1, $data_per_halaman);
 
-// Cari data jika ada permintaan pencarian
 if (isset($_POST['cari'])) {
     $cari = $_POST['cari'];
     $query_total = mysqli_query($conn, "SELECT COUNT(*) AS total FROM blog WHERE
@@ -24,14 +24,11 @@ $row_total = mysqli_fetch_assoc($query_total);
 $total_data = $row_total['total'];
 $total_halaman = ceil($total_data / $data_per_halaman);
 
-// Tentukan halaman saat ini
 $halaman_saat_ini = isset($_GET['halaman']) ? (int) $_GET['halaman'] : 1;
-$halaman_saat_ini = max(1, min($halaman_saat_ini, $total_halaman)); // Validasi nomor halaman
+$halaman_saat_ini = max(1, min($halaman_saat_ini, $total_halaman));
 
-// Hitung offset
 $offset = ($halaman_saat_ini - 1) * $data_per_halaman;
 
-// Query untuk mengambil data dengan limit dan offset
 if (isset($_POST['cari'])) {
     $cari = $_POST['cari'];
     $query = mysqli_query($conn, "SELECT b.*, k.namakategori
@@ -116,7 +113,6 @@ if (isset($_POST['cari'])) {
 
         .sidebar-menu .nav-item.active .nav-link {
             background-color: #0d6efd;
-            /* Bootstrap primary color */
             color: white;
         }
 
@@ -129,31 +125,25 @@ if (isset($_POST['cari'])) {
 
         .sidebar.collapsed .sidebar-menu .nav-item .nav-link span {
             display: none;
-            /* Sembunyikan elemen span (yang kemungkinan berisi teks) */
         }
 
         .sidebar.collapsed .sidebar-brand {
             font-size: 1.5rem;
-            /* Sesuaikan ukuran font brand agar pas di lebar kecil */
             text-align: center;
         }
 
         .sidebar.collapsed {
             width: 60px;
             align-items: center;
-            /* Center ikon secara vertikal */
         }
 
         .sidebar.collapsed .sidebar-menu .nav-item .nav-link {
             padding: 10px 15px;
-            /* Sesuaikan padding agar ikon tetap di tengah */
             justify-content: center;
-            /* Center ikon secara horizontal */
         }
 
         .sidebar.collapsed .sidebar-menu .nav-item .nav-link i {
             margin-right: 0;
-            /* Hilangkan margin kanan ikon */
         }
 
         .navbar {
@@ -178,7 +168,6 @@ if (isset($_POST['cari'])) {
             padding: 20px;
             margin-bottom: 20px;
             border-radius: 0.375rem;
-            /* Bootstrap default border-radius */
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
@@ -189,14 +178,12 @@ if (isset($_POST['cari'])) {
         }
 
         .card-body {
-            /* Style untuk isi card */
         }
 
         .data-widget {
             background-color: #e9ecef;
             padding: 15px;
             border-radius: 0.375rem;
-            /* Bootstrap default border-radius */
             margin-bottom: 15px;
             text-align: center;
         }
@@ -252,20 +239,11 @@ if (isset($_POST['cari'])) {
         </div>
         <ul class="sidebar-menu">
             <li class="nav-item active">
-                <a href="#" class="nav-link"><i class="fas fa-tachometer-alt"></i> Blog</a>
-            </li>
-            <!-- <li class="nav-item">
-                <a href="#" class="nav-link"><i class="fas fa-users"></i> Users</a>
-            </li> -->
-            <li class="nav-item">
-                <a href="?page=blog" class="nav-link"><i class="fas fa-users"></i> blog page</a>
-            </li>
-            <!-- <li class="nav-item">
-                <a href="#" class="nav-link"><i class="fas fa-box"></i> Products</a>
+                <a href="#" class="nav-link"><i class="fas fa-tachometer-alt"></i> Blog list</a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link"><i class="fas fa-chart-bar"></i> Reports</a>
-            </li> -->
+                <a href="?page=blog" class="nav-link"><i class="fas fa-users"></i> Blog page</a>
+            </li>
             <li class="nav-item">
                 <a href="#" class="nav-link"><i class="fas fa-cog"></i> Settings</a>
             </li>
@@ -277,6 +255,7 @@ if (isset($_POST['cari'])) {
             <button id="sidebarToggleBtn" class="navbar-toggler-btn">
                 <i class="fas fa-bars"></i>
             </button>
+            
             <div class="d-flex align-items-center">
                 <span class="me-3">Welcome, Admin</span>
                 <a href="?page=blog" class="btn btn-sm btn-outline-info" style="margin-right:10px">Blog</a>
@@ -341,10 +320,10 @@ if (isset($_POST['cari'])) {
                                 <td><?php echo $rowp['judul']; ?></td>
                                 <td><?php echo $rowp['namakategori']; ?></td>
                                 <td><?php echo substr($rowp['isi'], 0, 100); ?>...</td>
-                                <!-- <td><a href="index.php?page=blogview&id=<?php
-                                // echo $rowp['idblog']; 
+                                <td><a href="index.php?page=blogview&id=<?php
+                                echo $rowp['idblog']; 
                                 ?>"
-                                        class="btn btn-sm btn-info">View</a></td> -->
+                                        class="btn btn-sm btn-info">View</a></td>
                                 <td><a href="index.php?page=blogedit&id=<?php echo $rowp['idblog']; ?>"
                                         class="btn btn-sm btn-warning">Edit</a></td>
                                 <td><a href="index.php?proccess=bloghapus&id=<?php echo $rowp['idblog']; ?>"

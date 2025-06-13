@@ -1,5 +1,7 @@
 <?php
-include 'config/db.php';
+global $conn;             
+global $cari;            
+global $data_per_halaman;
 
 $id = $_POST['id'];
 $penulis = $_POST['penulis'];

@@ -1,8 +1,22 @@
 <?php
+ini_set('display_errors', 1); // Aktifkan ini untuk debugging
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-require_once 'config/db.php';
+// *** SOLUSI UTAMA ***
+// Bawa variabel global dari index.php ke dalam scope lokal blog.php
+global $conn; // <<< Ini adalah baris KUNCI yang baru ditambahkan
+global $cari; // <<< Pastikan ini juga ada, karena blog.php menggunakannya
+global $data_per_halaman; // <<< Pastikan ini juga ada, karena blog.php menggunakannya
+global $query_kategori; // <<< Juga butuh ini jika blog.php menggunakan $query_kategori dari index.php
 
-$query_kategori = mysqli_query($conn, "SELECT *FROM kategori");
+// Debugging (opsional, bisa dihapus setelah fix):
+if (!isset($conn) || !$conn instanceof mysqli) {
+    die("DEBUG: \$conn tidak valid di blog.php (setelah 'global \$conn;').");
+}
+if (!isset($query_kategori) || !$query_kategori instanceof mysqli_result) {
+    die("DEBUG: \$query_kategori tidak valid di blog.php (setelah 'global \$query_kategori;').");
+}
 
 if (isset($_POST['data_per_halaman'])) {
     $data_per_halaman = (int) $_POST['data_per_halaman'];
