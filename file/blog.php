@@ -66,13 +66,14 @@ $offset = ($halaman_saat_ini - 1) * $data_per_halaman;
 
 $query_blog = mysqli_query($conn, "SELECT * FROM blog" . $where_sql . " ORDER BY idblog ASC LIMIT $data_per_halaman OFFSET $offset");
 
+$query_kategori = mysqli_query($conn, "SELECT idkategori, namakategori FROM kategori");
 
 function limit_words($text, $limit, $ellipsis = '...')
 {
     $words = preg_split('/\s+/', $text, -1, PREG_SPLIT_NO_EMPTY);
 
     if (count($words) <= $limit) {
-        return $text;
+        return $text;   
     }
 
     $limited_words = array_slice($words, 0, $limit);
@@ -313,13 +314,39 @@ function limit_words($text, $limit, $ellipsis = '...')
                         }
 
                         // Page numbers
-                        for ($i = 1; $i <= $total_halaman; $i++) {
+                        // for ($i = 1; $i <= $total_halaman; $i++) {
+                        //     $active_class = ($i == $halaman_saat_ini) ? 'active' : '';
+                        //     $current_aria = ($i == $halaman_saat_ini) ? 'aria-current="page"' : '';
+
+                        //     echo '<li class="page-item ' . $active_class . '">';
+                        //     echo '<a class="page-link" href="' . $base_url . '&halaman=' . $i . '" ' . $current_aria . '>' . $i . '</a>';
+                        //     echo '</li>';
+                        // }
+
+                        $start_page = max(1, $halaman_saat_ini - 2);
+                        $end_page = min($total_halaman, $halaman_saat_ini + 2);
+
+                        if ($start_page > 1) {
+                            echo '<li class="page-item"><a class="page-link" href="' . $base_url . '&halaman=1">1</a></li>';
+                            if ($start_page > 2) {
+                                echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                            }
+                        }
+
+                        for ($i = $start_page; $i <= $end_page; $i++) {
                             $active_class = ($i == $halaman_saat_ini) ? 'active' : '';
                             $current_aria = ($i == $halaman_saat_ini) ? 'aria-current="page"' : '';
 
                             echo '<li class="page-item ' . $active_class . '">';
                             echo '<a class="page-link" href="' . $base_url . '&halaman=' . $i . '" ' . $current_aria . '>' . $i . '</a>';
                             echo '</li>';
+                        }
+                        
+                        if ($end_page < $total_halaman) {
+                             if ($end_page < $total_halaman - 1) {
+                                echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                            }
+                            echo '<li class="page-item"><a class="page-link" href="' . $base_url . '&halaman=' . $total_halaman . '">' . $total_halaman . '</a></li>';
                         }
 
                         // Next button
